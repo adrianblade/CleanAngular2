@@ -1,7 +1,8 @@
-import {Component} from 'angular2/core';
+import {Component, OnInit} from 'angular2/core';
 import {ShoppingListNewItemComponent} from "./shopping-list-new-item.component";
 import {ListItem} from "../list-item";
 import {ShoppingListItemComponent} from "./shopping-list-item-component";
+import {ShoppingListService} from "./shopping-list-service";
 
 @Component({
     selector: 'shopping-list',
@@ -25,21 +26,25 @@ import {ShoppingListItemComponent} from "./shopping-list-item-component";
         </section>
     `,
     directives: [ShoppingListNewItemComponent, ShoppingListItemComponent],
+    providers: [ShoppingListService]
 })
-export class ShoppingListComponent {
-    listItems = new Array<ListItem>();
+export class ShoppingListComponent implements OnInit{
+
+    listItems = Array<ListItem>();
     selectedItem: ListItem;
 
-    onItemAdded(item: ListItem){
-        this.listItems.push({name : item.name, amount: item.amount});
-    }
+    constructor(private _shoppingListService: ShoppingListService) {}
 
     onSelect(item: ListItem){
         this.selectedItem = item;
     }
 
-    onRemove(item: ListItem){
-        this.listItems.splice(this.listItems.indexOf(item), 1);
+    ngOnInit():any {
+        this.listItems = this._shoppingListService.getItems();
+    }
+
+    onRemove(){
         this.selectedItem = null;
     }
+
 }
